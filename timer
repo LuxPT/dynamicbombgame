@@ -1,12 +1,22 @@
-
 unsigned long tempoinicial, clockatual;
 unsigned int minutos = 4, segundos = 59;
 
 void timer() {
-  if(millis() - tempoinicial >= 1000){
+  if(millis() - tempoinicial >= 1000){ // Clock de um segundo;
   segundos--;
   Serial.println(segundos);
   tempoinicial = millis(); // Novo tempo inicial
+  }
+  
+  if(segundos == 0){
+    minutos--;
+    segundos = 59;
+
+    Serial.println(minutos);
+  }
+
+  if(minutos <= 0){
+    minutos = 0;
   }
 }
 
