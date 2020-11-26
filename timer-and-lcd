@@ -7,6 +7,8 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7); // Inicio do LCD
 char timeline[16]; // No fundo é uma linha do LCD
 
 void printlcd() {
+  lcd.setCursor(0,0);
+  lcd.print("Timer:"); // Imprime "Time" no display
   lcd.setCursor(7, 0);
   lcd.print(minutos);
   lcd.print(":");
@@ -57,7 +59,7 @@ void setup() {
   clockatual = millis();
   // Inicialização do LCD
   lcd.begin(16, 2); // Colunas, linhas (col/row); Inicializa o LCD e especifica as dimensões
-  lcd.print("Timer:"); // Imprime "Time" no display
+  
 }
 
 void loop() {
