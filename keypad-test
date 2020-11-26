@@ -113,6 +113,8 @@ if (key == '*' || key == '#' || key!=password[position])
 position = 0;
 digitalWrite(Redled, HIGH);
 digitalWrite(Greenled, LOW);
+delay(400);
+digitalWrite(Redled, LOW);
 
 digitalwrite(led1,1);
 digitalwrite(led2,1);
@@ -123,6 +125,9 @@ digitalwrite(led1,0);
 digitalwrite(led2,0);
 digitalwrite(led3,0);
  
+digitalWrite(Redled, HIGH);
+digitalWrite(Greenled, LOW);
+
  Serial.println(position); Serial.print("ERROR!!");
  conta++;
  
@@ -142,6 +147,10 @@ if (key == password[position])
 position ++;
   Serial.println(key);
   tone(piezo, 980, 500);
+  digitalWrite(Redled, LOW);
+  digitalWrite(Greenled, HIGH);
+ delay(400);
+  digitalWrite(Greenled, LOW);
 }
 
 if (position == 5)
@@ -183,7 +192,7 @@ delay(300);
 digitalwrite(led1,0);
 digitalwrite(led2,0);
 digitalwrite(led3,0);
-
+delay(300);
 
 Serial.print("BOMB HAS BEEN DEFUSED");
 
