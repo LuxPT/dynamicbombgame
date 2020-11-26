@@ -1,1 +1,70 @@
+#include <LiquidCrystal.h>
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2; // Pins do LCD, o LED fica ligado a VCC porque queremos que a luz esteja sempre on
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7); // Inicio do LCD
+char timeline[16]; // No fundo é uma linha do LCD
 
+unsigned long tempoinicial, clockatual, tempoinicialrefresh;
+unsigned int tempo[] = {4, 59}; // Minutos, segundos;
+//unsigned int minutos = 4, segundos = 59;
+
+
+
+
+
+
+
+void printlcd() {
+  if (millis() - tempoinicialrefresh >= 1000) { // Clock de um segundo;
+    lcd.setCursor(0, 1); // Canto inferior esquerdo;
+    lcd.print(tempo[0]);
+    lcd.print(":");
+    lcd.print(tempo[1]);
+    //sprintf(timeline, "%0.2d : %0.2d ", tempo[0], tempo[1]);
+
+  }
+  tempoinicialrefresh = millis(); // Regista um novo tempo;
+
+}
+
+void timer() {
+  if (millis() - tempoinicial >= 1000) { // Clock de um segundo;
+    if (tempo[0] >= 0) {
+      tempo[1]--;
+      Serial.println(tempo[1]);
+      tempoinicial = millis(); // Novo tempo inicial
+    }
+  }
+
+  if (tempo[0] > 0 && tempo[1] == 0) {
+    tempo[0]--;
+    tempo[1] = 60;
+    Serial.print("Minutos:");
+    Serial.println(tempo[0]);
+
+  }
+
+  else if (tempo[0] <= 0 && tempo[1] == 0) {
+    tempo[0] = 0;
+    tempo[1] = 0;
+    Serial.print("Minutos: ");
+    Serial.print(tempo[0]);
+    Serial.print(" Segundos: ");
+    Serial.println(tempo[1]);
+
+  }
+
+}
+
+void setup() {
+  Serial.begin(9600);
+  tempoinicial = millis(); // Regista o tempo inicial
+  tempoinicialrefresh = millis();
+
+  lcd.begin(16, 2); // Colunas, linhas (col/row); Inicializa o LCD e especifica as dimensões
+  lcd.print("Time:"); // Imprime "Time" no display
+}
+
+void loop() {
+  timer();
+  printlcd();
+}
