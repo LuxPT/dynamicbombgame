@@ -5,15 +5,16 @@
 #include <LiquidCrystal.h>
 
 //int signalPin = 12; Inútil neste código
-
+char Master[3][Password_Length] = { "123A456", "2020ACB", "BC2020A"};
 char Data[Password_Length];
-char Master[Password_Length] = "123A456"; // Palavra passe
+//char Master[Password_Length] = "123A456"; // Palavra passe
 byte data_count = 0, master_count = 0;
 bool password_correta;
 char customKey;
 
 const byte ROWS = 4;
 const byte COLS = 4;
+
 
 char hexaKeys[ROWS][COLS] = { // Inicialização da matriz 4x4
   {'1', '2', '3', 'A'},
@@ -46,13 +47,13 @@ void loop() {
 }
 
 void passdetect() {
-  lcd.setCursor(0, 0);
-  lcd.print("Enter Password:");
+  lcd.setCursor(0, 1);
+  lcd.print("PW:");
 
   customKey = customKeypad.getKey();
   if (customKey) {
     Data[data_count] = customKey;
-    lcd.setCursor(data_count, 1);
+    lcd.setCursor(data_count + 3, 1); // Aqui tem que ser +3 dado que "PW:" ocupa 3 digitos
     lcd.print(Data[data_count]);
     data_count++;
   }
@@ -60,10 +61,10 @@ void passdetect() {
   if (data_count == Password_Length - 1) {
     lcd.clear();
 
-    if (!strcmp(Data, Master)) {
+    if (!strcmp(Data, Master[1])) {
       lcd.print("Correct");
       //digitalWrite(signalPin, HIGH); // Não é necessário
-      //delay(5000); // Não é necessário
+      delay(5000); // Não é necessário
       //digitalWrite(signalPin, LOW); // Não é necessário
     }
     else {
