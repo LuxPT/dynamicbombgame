@@ -4,6 +4,8 @@
 #define LED2 52 // Pin do led2
 #define LED3 51 // Pin do led3
 
+#define PIEZO 45 // Pin do piezo
+
 unsigned long tempoinicial, clockatual;
 unsigned int minutos = 4, segundos = 59;
 char timeline[16]; // No fundo é uma linha do LCD
@@ -68,7 +70,22 @@ void timer() {
       segundos--;
       Serial.println(segundos);
       tempoinicial = millis(); // Novo tempo inicial
+
+
     }
+
+    // Piezo:
+    switch (minutos) {
+
+      case 1 ... 4:
+      tone(PIEZO , 1036, 200);
+      break;
+
+      case 0:
+      tone(PIEZO, 1600, 200);
+      break;
+    }
+    
   }
 
   if (minutos > 0 && segundos == 0) {
@@ -91,12 +108,12 @@ void timer() {
 void setup() {
   tempoinicial = millis(); // Regista o tempo inicial
   clockatual = millis();
-  
-  
+
+
   lcd.begin(16, 2); // Inicialização do LCD
   lcd.print("Timer:"); // Imprime "Time" no display
 
-  
+
   for (int i = 0; i <= 2; i++) {
     pinMode(led[i], OUTPUT);
     digitalWrite(led[i], LOW);
@@ -165,6 +182,10 @@ void passdetect() {
 
     lcd.clear();
     clearData();
+
+    lcd.setCursor(0, 0);
+    lcd.print("Timer:"); // Imprime "Time" no display
+
   }
 }
 void clearData() {
