@@ -3,6 +3,10 @@
 #define LED1 53 // Pin do led1
 #define LED2 52 // Pin do led2
 #define LED3 51 // Pin do led3
+#define LEDR 38
+#define LEDG 39
+
+#define PIEZO 45
 
 unsigned long tempoinicial, clockatual;
 unsigned int minutos = 4, segundos = 59;
@@ -68,6 +72,9 @@ void timer() {
       segundos--;
       Serial.println(segundos);
       tempoinicial = millis(); // Novo tempo inicial
+
+      // Piezo:
+      tone(PIEZO, 1036, 200);
     }
   }
 
@@ -92,15 +99,21 @@ void setup() {
   tempoinicial = millis(); // Regista o tempo inicial
   clockatual = millis();
   
-  
   lcd.begin(16, 2); // Inicialização do LCD
   lcd.print("Timer:"); // Imprime "Time" no display
 
+
+
+  pinMode(LEDR, OUTPUT);
+  pinMode(LEDG, OUTPUT);
   
   for (int i = 0; i <= 2; i++) {
     pinMode(led[i], OUTPUT);
     digitalWrite(led[i], LOW);
   }
+  digitalWrite(LEDR,0);
+  digitalWrite(LEDG,0);
+  
   randomSeed(analogRead(A0));
   random_val = random(0, 4); // Faz com que random_val assuma um valor aleatório entre 0 e 3;
 
@@ -153,18 +166,34 @@ void passdetect() {
 
       lcd.setCursor(0, 1);
       lcd.print("Correct");
+      digitalWrite(LEDG,1);
+      digitalWrite(LEDR,0);
+      tone(PIEZO, 2036, 200);
+      delay(300);
+      tone(PIEZO, 2036, 200);
       //digitalWrite(signalPin, HIGH); // Não é necessário
-      delay(5000); // Não é necessário
+      delay(500); // Não é necessário
       //digitalWrite(signalPin, LOW); // Não é necessário
+      digitalWrite(LEDG,0);
     }
     else {
       lcd.setCursor(0, 1);
       lcd.print("Incorrect");
-      delay(1000);
+      digitalWrite(LEDG,0);
+      digitalWrite(LEDR,1);
+      tone(PIEZO, 259, 200);
+      delay(300);
+      tone(PIEZO, 259, 200);
+      
+      delay(600);
+      digitalWrite(LEDR,0);
     }
 
     lcd.clear();
     clearData();
+    
+    lcd.setCursor(0,0);
+    lcd.print("Timer:");
   }
 }
 void clearData() {
