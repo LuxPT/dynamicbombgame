@@ -8,8 +8,9 @@
 
 #define PIEZO 45
 
+int ciclo_clock = 1000;
 unsigned long tempoinicial, clockatual;
-unsigned int minutos = 4, segundos = 59;
+unsigned long minutos = 4, segundos = 59;
 char timeline[16]; // No fundo é uma linha do LCD
 
 #include <Keypad.h>
@@ -67,7 +68,7 @@ void printlcd() {
 }
 
 void timer() {
-  if (millis() - tempoinicial >= 1000) { // Clock de um segundo;
+  if (millis() - tempoinicial >= ciclo_clock) { // Clock de um segundo;
     if (minutos >= 0) {
       segundos--;
       Serial.println(segundos);
@@ -98,7 +99,7 @@ void timer() {
 void setup() {
   tempoinicial = millis(); // Regista o tempo inicial
   clockatual = millis();
-  
+
   lcd.begin(16, 2); // Inicialização do LCD
   lcd.print("Timer:"); // Imprime "Time" no display
 
@@ -106,14 +107,14 @@ void setup() {
 
   pinMode(LEDR, OUTPUT);
   pinMode(LEDG, OUTPUT);
-  
+
   for (int i = 0; i <= 2; i++) {
     pinMode(led[i], OUTPUT);
     digitalWrite(led[i], LOW);
   }
-  digitalWrite(LEDR,0);
-  digitalWrite(LEDG,0);
-  
+  digitalWrite(LEDR, 0);
+  digitalWrite(LEDG, 0);
+
   randomSeed(analogRead(A0));
   random_val = random(0, 4); // Faz com que random_val assuma um valor aleatório entre 0 e 3;
 
@@ -154,9 +155,11 @@ void passdetect() {
   customKey = customKeypad.getKey();
   if (customKey) {
     Data[data_count] = customKey;
+
     lcd.setCursor(data_count + 3, 1); // Aqui tem que ser +3 dado que "PW:" ocupa 3 digitos
     lcd.print(Data[data_count]);
     data_count++;
+    tone(PIEZO, 1600, 100);
   }
 
   if (data_count == Password_Length - 1) {
@@ -166,33 +169,39 @@ void passdetect() {
 
       lcd.setCursor(0, 1);
       lcd.print("Correct");
-      digitalWrite(LEDG,1);
-      digitalWrite(LEDR,0);
+      digitalWrite(LEDG, 1);
+      digitalWrite(LEDR, 0);
       tone(PIEZO, 2036, 200);
       delay(300);
       tone(PIEZO, 2036, 200);
       //digitalWrite(signalPin, HIGH); // Não é necessário
       delay(500); // Não é necessário
       //digitalWrite(signalPin, LOW); // Não é necessário
-      digitalWrite(LEDG,0);
+      digitalWrite(LEDG, 0);
     }
     else {
+      // Caso o código esteja incorreto
+      if(ciclo_clock > 500)
+      ciclo_clock = ciclo_clock - 250;
+      
       lcd.setCursor(0, 1);
       lcd.print("Incorrect");
-      digitalWrite(LEDG,0);
-      digitalWrite(LEDR,1);
-      tone(PIEZO, 259, 200);
+      digitalWrite(LEDG, 0);
+      digitalWrite(LEDR, 1);
+      tone(PIEZO, 90, 200);
       delay(300);
-      tone(PIEZO, 259, 200);
-      
+      tone(PIEZO, 90, 200);
+
       delay(600);
-      digitalWrite(LEDR,0);
+      digitalWrite(LEDR, 0);
+  
+    
     }
 
     lcd.clear();
     clearData();
-    
-    lcd.setCursor(0,0);
+
+    lcd.setCursor(0, 0);
     lcd.print("Timer:");
   }
 }
