@@ -228,7 +228,7 @@ void passdetect() {
     }
     else {
       // Caso o código esteja incorreto
-      if (ciclo_clock > 500)
+      if (ciclo_clock > 250)
         ciclo_clock = ciclo_clock - 250;
 
       lcd.setCursor(0, 1);
