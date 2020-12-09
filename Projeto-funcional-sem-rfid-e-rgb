@@ -110,6 +110,8 @@ void defusecheck(){
     lcd.setCursor(0,0);
     lcd.print("Defused");
     delay(500);
+    digitalWrite(LEDG, HIGH);
+    delay(500);
   }
 }
 void boomcheck() {
@@ -125,7 +127,9 @@ void boomcheck() {
     lcd.setCursor(0, 1);
     lcd.print("Boom!");
   delay(500);
-
+  digitalWrite(LEDR, HIGH);
+  delay(500);
+  
   }
 }
 
