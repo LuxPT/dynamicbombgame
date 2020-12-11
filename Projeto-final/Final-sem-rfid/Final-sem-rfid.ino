@@ -144,6 +144,72 @@ void rgbcor(int red_light_value, int green_light_value, int blue_light_value)
   analogWrite(RGBB, blue_light_value);
 }
 
+void passdetect() {
+  lcd.setCursor(0, 1);
+  lcd.print("PW:");
+
+  customKey = customKeypad.getKey();
+  if (customKey) {
+    Data[data_count] = customKey;
+
+    lcd.setCursor(data_count + 3, 1); // Aqui tem que ser +3 dado que "PW:" ocupa 3 digitos
+    lcd.print(Data[data_count]);
+    data_count++;
+    tone(PIEZO, 1600, 100);
+  }
+
+  if (data_count == Password_Length - 1) {
+    lcd.clear();
+
+    if (!strcmp(Data, Master[random_val])) {
+
+      defuse = true;
+      lcd.setCursor(0, 1);
+      lcd.print("Correct");
+      digitalWrite(LEDG, 1);
+      digitalWrite(LEDR, 0);
+      tone(PIEZO, 2036, 200);
+      delay(300);
+      tone(PIEZO, 2036, 200);
+      //digitalWrite(signalPin, HIGH); // Não é necessário
+      delay(500); // Não é necessário
+      //digitalWrite(signalPin, LOW); // Não é necessário
+      digitalWrite(LEDG, 0);
+    }
+    else {
+      // Caso o código esteja incorreto
+      if (ciclo_clock > 250)
+        ciclo_clock = ciclo_clock - 250;
+
+      lcd.setCursor(0, 1);
+      lcd.print("Incorrect");
+      digitalWrite(LEDG, 0);
+      digitalWrite(LEDR, 1);
+      tone(PIEZO, 90, 200);
+      delay(300);
+      tone(PIEZO, 90, 200);
+
+      delay(600);
+      digitalWrite(LEDR, 0);
+
+
+    }
+
+    lcd.clear();
+    clearData();
+
+    lcd.setCursor(0, 0);
+    lcd.print("Timer:");
+  }
+}
+
+void clearData() {
+  while (data_count != 0) {
+    Data[data_count--] = 0;
+  }
+  return;
+}
+
 void setup() {
   tempoinicial = millis(); // Regista o tempo inicial
   clockatual = millis();
@@ -206,69 +272,4 @@ void loop() {
   boomcheck();
   defusecheck();
 
-}
-
-void passdetect() {
-  lcd.setCursor(0, 1);
-  lcd.print("PW:");
-
-  customKey = customKeypad.getKey();
-  if (customKey) {
-    Data[data_count] = customKey;
-
-    lcd.setCursor(data_count + 3, 1); // Aqui tem que ser +3 dado que "PW:" ocupa 3 digitos
-    lcd.print(Data[data_count]);
-    data_count++;
-    tone(PIEZO, 1600, 100);
-  }
-
-  if (data_count == Password_Length - 1) {
-    lcd.clear();
-
-    if (!strcmp(Data, Master[random_val])) {
-
-      defuse = true;
-      lcd.setCursor(0, 1);
-      lcd.print("Correct");
-      digitalWrite(LEDG, 1);
-      digitalWrite(LEDR, 0);
-      tone(PIEZO, 2036, 200);
-      delay(300);
-      tone(PIEZO, 2036, 200);
-      //digitalWrite(signalPin, HIGH); // Não é necessário
-      delay(500); // Não é necessário
-      //digitalWrite(signalPin, LOW); // Não é necessário
-      digitalWrite(LEDG, 0);
-    }
-    else {
-      // Caso o código esteja incorreto
-      if (ciclo_clock > 250)
-        ciclo_clock = ciclo_clock - 250;
-
-      lcd.setCursor(0, 1);
-      lcd.print("Incorrect");
-      digitalWrite(LEDG, 0);
-      digitalWrite(LEDR, 1);
-      tone(PIEZO, 90, 200);
-      delay(300);
-      tone(PIEZO, 90, 200);
-
-      delay(600);
-      digitalWrite(LEDR, 0);
-
-
-    }
-
-    lcd.clear();
-    clearData();
-
-    lcd.setCursor(0, 0);
-    lcd.print("Timer:");
-  }
-}
-void clearData() {
-  while (data_count != 0) {
-    Data[data_count--] = 0;
-  }
-  return;
 }
