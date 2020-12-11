@@ -1,10 +1,14 @@
 #define Password_Length 8 // Tamanho da password, deve ser preservado.
 // Leds da sequencia
-#define LED1 53 // Pin do led1
-#define LED2 52 // Pin do led2
-#define LED3 51 // Pin do led3
+#define LED1 48 // Pin do led1
+#define LED2 46 // Pin do led2
+#define LED3 53 // Pin do led3
 #define LEDR 38
 #define LEDG 39
+// RGB
+#define RGBR 29
+#define RGBG 31
+#define RGBB 33
 
 #define PIEZO 45
 
@@ -148,14 +152,18 @@ void setup() {
   lcd.print("Timer:"); // Imprime "Time" no display
 
 
-
+  // RGB
   pinMode(LEDR, OUTPUT);
   pinMode(LEDG, OUTPUT);
   pinMode(LEDB, OUTPUT);
+  
+  // Leds azuis
   for (int i = 0; i <= 2; i++) {
     pinMode(led[i], OUTPUT);
     digitalWrite(led[i], LOW);
   }
+  
+  // Led vermelho e led verde
   digitalWrite(LEDR, 0);
   digitalWrite(LEDG, 0);
 
@@ -164,20 +172,20 @@ void setup() {
 
   switch (random_val) {
 
-    case 0: // Primeira led acessa -> Password 0 "123A456"
+    case 0: // Primeira led acessa -> Password 0 
       digitalWrite(led[0], HIGH);
       break;
 
-    case 1: // Primeira e última led acessa -> Password 1 "2020ACB"
+    case 1: // Primeira e última led acessa -> Password 1 
       digitalWrite(led[0], HIGH);
       digitalWrite(led[2], HIGH);
       break;
 
-    case 2: // Segunda led acessa -> Password 2 "BC2020A"
+    case 2: // Segunda led acessa -> Password 2 
       digitalWrite(led[1], HIGH);
       break;
 
-    case 3: // Todas acessas -> Password 3 "BC2020A"
+    case 3: // Todas acessas -> Password 3 
       digitalWrite(led[0], HIGH);
       digitalWrite(led[1], HIGH);
       digitalWrite(led[2], HIGH);
