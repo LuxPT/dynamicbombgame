@@ -133,6 +133,12 @@ void boomcheck() {
   }
 }
 
+void rgbcor(int red_light_value, int green_light_value, int blue_light_value)
+ {
+  analogWrite(RGBR, red_light_value);
+  analogWrite(RGBG, green_light_value);
+  analogWrite(RGBB, blue_light_value);
+}
 
 void setup() {
   tempoinicial = millis(); // Regista o tempo inicial
@@ -145,7 +151,7 @@ void setup() {
 
   pinMode(LEDR, OUTPUT);
   pinMode(LEDG, OUTPUT);
-
+  pinMode(LEDB, OUTPUT);
   for (int i = 0; i <= 2; i++) {
     pinMode(led[i], OUTPUT);
     digitalWrite(led[i], LOW);
