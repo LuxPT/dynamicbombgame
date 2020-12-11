@@ -21,6 +21,7 @@ int ciclo_clock = 1000;
 unsigned long tempoinicial, clockatual;
 unsigned long minutos = 4, segundos = 59;
 char timeline[16]; // No fundo é uma linha do LCD
+unsigned long rfid_inicial;
 
 // RFID
 #include <SPI.h>
@@ -222,50 +223,12 @@ void clearData() {
   return;
 }
 
-void rfidcheck() {
-  // Deteção de novos cartões
-  if ( ! mfrc522.PICC_IsNewCardPresent()) {
-    return;
 
-  }
-
-
-  // Select one of the cards
-  if ( ! mfrc522.PICC_ReadCardSerial()) {
-    return;
-
-  }
-  //Show UID on serial monitor
-  Serial.print("UID tag :");
-  String content = "";
-  byte letter;
-  for (byte i = 0; i < mfrc522.uid.size; i++)
-  {
-    Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
-    Serial.print(mfrc522.uid.uidByte[i], HEX);
-    content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
-    content.concat(String(mfrc522.uid.uidByte[i], HEX));
-  }
-  Serial.println();
-  Serial.print("Message : ");
-  content.toUpperCase();
-  if (content.substring(1) == "77 60 D5 B5") // ID do cartão branco
-  {
-    Serial.println("Acesso autorizado");
-    Serial.println();
-    delay(1500);
-    start = true;
-  }
-
-  else   {
-    Serial.println("Acesso negado");
-    delay(1500);
-  }
-}
 
   void setup() {
     tempoinicial = millis(); // Regista o tempo inicial
     clockatual = millis();
+    rfid_inicial = millis();
 
     Serial.begin(BAUD_RATE);
 
@@ -324,13 +287,28 @@ void rfidcheck() {
   }
 
   void loop() {
+  if(millis() - rfid_inicial >= 1000){
+  if (RC522.isCard())
+  {
+    /* If so then get its serial number */
+    RC522.readCardSerial();
+    Serial.println("Card detected:");
+    for(int i=0;i<5;i++)
+    {
+    Serial.print(RC522.serNum[i],DEC);
+    //Serial.print(RC522.serNum[i],HEX); //to print card detail in Hexa Decimal format
+    }
+    Serial.println();
+    Serial.println();
+  }
+  rfid_inicial = millis();
+  }
   
-    rfidcheck();
+    
     if (boom == false && defuse == false && start == true) { // Quando a bomba não chegou a 0, continuar com o clock a funcionar.
       passdetect();
       timer();
       printlcd();
-      rfidcheck();
     }
 
     // A partir daqui apenas corre o código do modo final.
