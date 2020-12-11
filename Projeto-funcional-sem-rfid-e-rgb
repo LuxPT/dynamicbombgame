@@ -151,9 +151,9 @@ void setup() {
   pinMode(LEDR, OUTPUT);
   pinMode(LEDG, OUTPUT);
   // RGB
-  pinMode(LEDR, OUTPUT);
-  pinMode(LEDG, OUTPUT);
-  pinMode(LEDB, OUTPUT);
+  pinMode(RGBR, OUTPUT);
+  pinMode(RGBG, OUTPUT);
+  pinMode(RGBB, OUTPUT);
   // Três leds
   for (int i = 0; i <= 2; i++) {
     pinMode(led[i], OUTPUT);
