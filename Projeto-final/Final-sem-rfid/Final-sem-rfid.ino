@@ -14,7 +14,7 @@
 
 #define BAUD_RATE 9600
 
-int start = false;
+
 int defuse = false;
 int boom = false;
 int ciclo_clock = 1000;
@@ -23,13 +23,14 @@ unsigned long minutos = 4, segundos = 59;
 char timeline[16]; // No fundo é uma linha do LCD
 
 // RFID
+/*
 #include <SPI.h>
 #include <MFRC522.h>
 
 #define SS_PIN 10
 #define RST_PIN 9
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Inicia o MFRC522
-
+*/
 // Keypad e LCD
 #include <Keypad.h>
 #include <LiquidCrystal.h>
@@ -222,7 +223,7 @@ void clearData() {
   return;
 }
 
-void rfidcheck() {
+/* void rfidcheck() {
   // Deteção de novos cartões
   if ( ! mfrc522.PICC_IsNewCardPresent()) {
     return;
@@ -262,20 +263,21 @@ void rfidcheck() {
     delay(1500);
   }
 }
-
+*/
   void setup() {
     tempoinicial = millis(); // Regista o tempo inicial
     clockatual = millis();
 
     Serial.begin(BAUD_RATE);
-
+    
     // RFID
+    /*
     SPI.begin();   // Inicia o SPI
     mfrc522.PCD_Init();   // Initiate MFRC522
     
     Serial.println("Approximate your card to the reader..."); // Mensagem de feedback para o serial
     Serial.println();                                         // Mensagem de feedback para o serial
-
+    */
     
     lcd.begin(16, 2); // Inicialização do LCD
     lcd.print("Timer:"); // Imprime "Time" no display
@@ -325,12 +327,12 @@ void rfidcheck() {
 
   void loop() {
   
-    rfidcheck();
-    if (boom == false && defuse == false && start == true) { // Quando a bomba não chegou a 0, continuar com o clock a funcionar.
+    //rfidcheck();
+    if (boom == false && defuse == false) { // Quando a bomba não chegou a 0, continuar com o clock a funcionar.
       passdetect();
       timer();
       printlcd();
-      rfidcheck();
+      //rfidcheck();
     }
 
     // A partir daqui apenas corre o código do modo final.
