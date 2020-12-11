@@ -261,6 +261,7 @@ void rfidcheck() {
     Serial.println("Acesso negado");
     delay(1500);
   }
+}
 
   void setup() {
     tempoinicial = millis(); // Regista o tempo inicial
@@ -270,7 +271,7 @@ void rfidcheck() {
 
     // RFID
     SPI.begin();   // Inicia o SPI
-    RC522.init();  // Inicia o leitor de cartões
+    mfrc522.PCD_Init();   // Initiate MFRC522
     
     Serial.println("Approximate your card to the reader..."); // Mensagem de feedback para o serial
     Serial.println();                                         // Mensagem de feedback para o serial
