@@ -27,8 +27,8 @@ unsigned long rfid_inicial;
 #include <SPI.h>
 #include <MFRC522.h>
 
-#define SS_PIN 10
-#define RST_PIN 9
+#define SS_PIN 9
+#define RST_PIN 8
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Inicia o MFRC522
 
 // Keypad e LCD
