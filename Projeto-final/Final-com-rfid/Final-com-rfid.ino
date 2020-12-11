@@ -225,95 +225,117 @@ void clearData() {
 
 
 
-  void setup() {
-    tempoinicial = millis(); // Regista o tempo inicial
-    clockatual = millis();
-    rfid_inicial = millis();
-
-    Serial.begin(BAUD_RATE);
-
-    // RFID
-    SPI.begin();   // Inicia o SPI
-    mfrc522.PCD_Init();   // Initiate MFRC522
-    
-    Serial.println("Approximate your card to the reader..."); // Mensagem de feedback para o serial
-    Serial.println();                                         // Mensagem de feedback para o serial
-
-    
-    lcd.begin(16, 2); // Inicialização do LCD
-    lcd.print("Timer:"); // Imprime "Time" no display
-
-
-    // RGB
-    pinMode(RGBR, OUTPUT);
-    pinMode(RGBG, OUTPUT);
-    pinMode(RGBB, OUTPUT);
-
-    // Leds azuis
-    for (int i = 0; i <= 2; i++) {
-      pinMode(led[i], OUTPUT);
-      digitalWrite(led[i], LOW);
-    }
-
-    // Led vermelho e led verde
-    digitalWrite(LEDR, 0);
-    digitalWrite(LEDG, 0);
-
-    randomSeed(analogRead(A0));
-    random_val = random(0, 4); // Faz com que random_val assuma um valor aleatório entre 0 e 3;
-
-    switch (random_val) {
-
-      case 0: // Primeira led acessa -> Password 0
-        digitalWrite(led[0], HIGH);
-        break;
-
-      case 1: // Primeira e última led acessa -> Password 1
-        digitalWrite(led[0], HIGH);
-        digitalWrite(led[2], HIGH);
-        break;
-
-      case 2: // Segunda led acessa -> Password 2
-        digitalWrite(led[1], HIGH);
-        break;
-
-      case 3: // Todas acessas -> Password 3
-        digitalWrite(led[0], HIGH);
-        digitalWrite(led[1], HIGH);
-        digitalWrite(led[2], HIGH);
-        break;
-    } // Fim do switch
-
-  }
-
-  void loop() {
-  if(millis() - rfid_inicial >= 1000){
-  if (RC522.isCard())
-  {
-    /* If so then get its serial number */
-    RC522.readCardSerial();
-    Serial.println("Card detected:");
-    for(int i=0;i<5;i++)
-    {
-    Serial.print(RC522.serNum[i],DEC);
-    //Serial.print(RC522.serNum[i],HEX); //to print card detail in Hexa Decimal format
-    }
-    Serial.println();
-    Serial.println();
-  }
+void setup() {
+  tempoinicial = millis(); // Regista o tempo inicial
+  clockatual = millis();
   rfid_inicial = millis();
+
+  Serial.begin(BAUD_RATE);
+
+  // RFID
+  SPI.begin();   // Inicia o SPI
+  mfrc522.PCD_Init();   // Initiate MFRC522
+
+  Serial.println("Approximate your card to the reader..."); // Mensagem de feedback para o serial
+  Serial.println();                                         // Mensagem de feedback para o serial
+
+
+  lcd.begin(16, 2); // Inicialização do LCD
+  lcd.print("Timer:"); // Imprime "Time" no display
+
+
+  // RGB
+  pinMode(RGBR, OUTPUT);
+  pinMode(RGBG, OUTPUT);
+  pinMode(RGBB, OUTPUT);
+
+  // Leds azuis
+  for (int i = 0; i <= 2; i++) {
+    pinMode(led[i], OUTPUT);
+    digitalWrite(led[i], LOW);
   }
-  
-    
-    if (boom == false && defuse == false && start == true) { // Quando a bomba não chegou a 0, continuar com o clock a funcionar.
-      passdetect();
-      timer();
-      printlcd();
+
+  // Led vermelho e led verde
+  digitalWrite(LEDR, 0);
+  digitalWrite(LEDG, 0);
+
+  randomSeed(analogRead(A0));
+  random_val = random(0, 4); // Faz com que random_val assuma um valor aleatório entre 0 e 3;
+
+  switch (random_val) {
+
+    case 0: // Primeira led acessa -> Password 0
+      digitalWrite(led[0], HIGH);
+      break;
+
+    case 1: // Primeira e última led acessa -> Password 1
+      digitalWrite(led[0], HIGH);
+      digitalWrite(led[2], HIGH);
+      break;
+
+    case 2: // Segunda led acessa -> Password 2
+      digitalWrite(led[1], HIGH);
+      break;
+
+    case 3: // Todas acessas -> Password 3
+      digitalWrite(led[0], HIGH);
+      digitalWrite(led[1], HIGH);
+      digitalWrite(led[2], HIGH);
+      break;
+  } // Fim do switch
+
+}
+
+void loop() {
+  if (millis() - rfid_inicial >= 1000) {
+    // Procurar objeto
+    if (!mfrc522.PICC_IsNewCardPresent())
+    {
+      return;
+    }
+    // Seleciona objeto
+    if (!mfrc522.PICC_ReadCardSerial())
+    {
+      return;
+    }
+    //UID do objeto
+    Serial.print("UID:");
+    String conteudo = "";
+    byte letra;
+    for (byte i = 0; i < mfrc522.uid.size; i++)
+    {
+      Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
+      Serial.print(mfrc522.uid.uidByte[i], HEX);
+      conteudo.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
+      conteudo.concat(String(mfrc522.uid.uidByte[i], HEX));
     }
 
-    // A partir daqui apenas corre o código do modo final.
-    boomcheck();
-    defusecheck();
-    
+    Serial.println();
+    conteudo.toUpperCase();
+
+    //----------------------------------------------------CARTAO----------------------------------------------------
+
+    if (conteudo.substring(1) == "B0 91 C1 19") //UID 1 - Cartao
+    {
+      Serial.println("Cartao branco");
+      Serial.println();
+      delay(3000);
+      start = true;
+    }
+
 
   }
+
+
+  if (boom == false && defuse == false && start == true) { // Quando a bomba não chegou a 0, continuar com o clock a funcionar.
+    passdetect();
+    timer();
+    printlcd();
+  }
+
+  // A partir daqui apenas corre o código do modo final.
+  boomcheck();
+  defusecheck();
+
+
+}
