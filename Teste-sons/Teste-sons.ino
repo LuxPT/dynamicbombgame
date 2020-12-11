@@ -27,6 +27,7 @@ unsigned long tempoinicial, clockatual;
 unsigned long minutos = MIN, segundos = SEG;
 char timeline[16]; // No fundo é uma linha do LCD
 unsigned long rfid_inicial;
+unsigned long rfid_override_inicial;
 
 // RFID
 #include <SPI.h>
@@ -102,7 +103,7 @@ void timer() {
 
       // Piezo:
       tone(PIEZO, 1056, 200);
-     
+
     }
   }
 
@@ -272,12 +273,11 @@ void clearData() {
   return;
 }
 
-
-
 void setup() {
   tempoinicial = millis(); // Regista o tempo inicial
   clockatual = millis();
   rfid_inicial = millis();
+  rfid_override_inicial = millis();
 
   Serial.begin(BAUD_RATE);
 
@@ -338,7 +338,7 @@ void setup() {
 void loop() {
   if (start == false) {
     lcd.clear();
-    lcd.setCursor(0,0);
+    lcd.setCursor(0, 0);
     lcd.print("Swipe the card");
     if (millis() - rfid_inicial >= 1000) {
       // Procurar objeto
@@ -379,13 +379,13 @@ void loop() {
         delay(350);
         tone(PIEZO, 3010, 300);
         delay(1500);
-        
+
         digitalWrite(LEDG, LOW);
         start = true;
         lcd.clear();
-        lcd.setCursor(0,0);
+        lcd.setCursor(0, 0);
         lcd.print("Timer:");
-        
+
       }
 
 
@@ -397,6 +397,58 @@ void loop() {
     passdetect();
     timer();
     printlcd();
+
+
+    // Defuse com a tag
+
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Swipe the card");
+    if (millis() - rfid_inicial >= 1000) {
+      // Procurar objeto
+      if (!mfrc522.PICC_IsNewCardPresent())
+      {
+        return;
+      }
+      // Seleciona objeto
+      if (!mfrc522.PICC_ReadCardSerial())
+      {
+        return;
+      }
+      //UID do objeto
+      Serial.print("UID:");
+      String conteudo = "";
+      byte letra;
+      for (byte i = 0; i < mfrc522.uid.size; i++)
+      {
+        Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
+        Serial.print(mfrc522.uid.uidByte[i], HEX);
+        conteudo.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
+        conteudo.concat(String(mfrc522.uid.uidByte[i], HEX));
+      }
+
+      Serial.println();
+      conteudo.toUpperCase();
+
+      //----------------------------------------------------CARTAO----------------------------------------------------
+
+      if (conteudo.substring(1) == "2A 38 8E 81") //UID 1 - Cartao
+      {
+        Serial.println("Tag azul");
+        Serial.println();
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Manual override");
+        digitalWrite(LEDG, HIGH);
+        tone(PIEZO, 3010, 300);
+        delay(350);
+        tone(PIEZO, 3010, 300);
+        delay(1500);
+
+        digitalWrite(LEDG, LOW);
+        defuse = true;
+      }
+    }
   }
 
   // A partir daqui apenas corre o código do modo final.
