@@ -397,7 +397,8 @@ void loop() {
     passdetect();
     timer();
     printlcd();
-
+    boomcheck();
+    
     // Defuse manual
     // Procurar objeto
     if (!mfrc522.PICC_IsNewCardPresent())
