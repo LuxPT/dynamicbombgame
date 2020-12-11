@@ -1,0 +1,12 @@
+/*
+PINOUT:
+RC522 MODULE    Uno/Nano     MEGA
+SDA             D10          D9
+SCK             D13          D52
+MOSI            D11          D51
+MISO            D12          D50
+IRQ             N/A          N/A
+GND             GND          GND
+RST             D9           D8
+3.3V            3.3V         3.3V
+*/
