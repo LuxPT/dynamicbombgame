@@ -1,4 +1,6 @@
 #define Password_Length 8 // Tamanho da password, deve ser preservado.
+#define MIN 4
+#define SEG 59
 // Leds da sequencia
 #define LED1 48 // Pin do led1
 #define LED2 46 // Pin do led2
@@ -22,7 +24,7 @@ int defuse = false;
 int boom = false;
 int ciclo_clock = 1000;
 unsigned long tempoinicial, clockatual;
-unsigned long minutos = 4, segundos = 59;
+unsigned long minutos = MIN, segundos = SEG;
 char timeline[16]; // No fundo é uma linha do LCD
 unsigned long rfid_inicial;
 
@@ -99,7 +101,8 @@ void timer() {
       tempoinicial = millis(); // Novo tempo inicial
 
       // Piezo:
-      tone(PIEZO, 1036, 200);
+      tone(PIEZO, 1056, 200);
+     
     }
   }
 
