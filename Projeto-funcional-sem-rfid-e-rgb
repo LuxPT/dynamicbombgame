@@ -153,9 +153,9 @@ void setup() {
 
 
   // RGB
-  pinMode(LEDR, OUTPUT);
-  pinMode(LEDG, OUTPUT);
-  pinMode(LEDB, OUTPUT);
+  pinMode(RGBR, OUTPUT);
+  pinMode(RGBG, OUTPUT);
+  pinMode(RGBB, OUTPUT);
   
   // Leds azuis
   for (int i = 0; i <= 2; i++) {
