@@ -105,6 +105,7 @@ void timer() {
 
   if (minutos > 0 && segundos == 0) {
     minutos--;
+    tone(PIEZO, 670, 350); // Som de quando passa um minuto
     segundos = 59;
     Serial.print("Minutos:");
     Serial.println(minutos);
@@ -213,7 +214,7 @@ void passdetect() {
     lcd.setCursor(data_count + 3, 1); // Aqui tem que ser +3 dado que "PW:" ocupa 3 digitos
     lcd.print(Data[data_count]);
     data_count++;
-    tone(PIEZO, 1600, 100);
+    tone(PIEZO, 2036, 100);
   }
 
   if (data_count == Password_Length - 1) {
@@ -333,6 +334,9 @@ void setup() {
 
 void loop() {
   if (start == false) {
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Swipe the card");
     if (millis() - rfid_inicial >= 1000) {
       // Procurar objeto
       if (!mfrc522.PICC_IsNewCardPresent())
@@ -365,8 +369,20 @@ void loop() {
       {
         Serial.println("Cartao branco");
         Serial.println();
-        delay(3000);
+        lcd.clear();
+        lcd.print("Card accepted");
+        digitalWrite(LEDG, HIGH);
+        tone(PIEZO, 3010, 300);
+        delay(350);
+        tone(PIEZO, 3010, 300);
+        delay(1500);
+        
+        digitalWrite(LEDG, LOW);
         start = true;
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print("Timer:");
+        
       }
 
 
