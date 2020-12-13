@@ -346,22 +346,27 @@ void loop() {
       case 0:
       lcd.setCursor(0,1);
       lcd.print("J-K-L-M-11-M-N-O");
+      delay(200);
       break;
 
       case 1:
       lcd.setCursor(0,1);
       lcd.print("L-J-L-J-11-13-12");
+      delay(200);
       break;
 
       case 2:
       lcd.setCursor(0,1);
       lcd.print("5-6-E-K-J-I-#");
+      delay(200);
       break;
 
       case 3:
       lcd.setCursor(0,1);
       lcd.print("#-14-V-R-16-M-S");
+      delay(200);
       break;
+      
     }
     if (millis() - rfid_inicial >= 1000) {
       // Procurar objeto
