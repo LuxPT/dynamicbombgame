@@ -332,14 +332,44 @@ void setup() {
       digitalWrite(led[2], HIGH);
       break;
   } // Fim do switch
+  
+lcd.clear(); // Limpa o ecrã para passar a nova mensagem no inicio
+lcd.setCursor(0,0);
+lcd.print("Swipe the card");
+switch(random_val){
+  
+  case 0: // Primeira
+  lcd.setCursor(0,2);
+  lcd.print("J-K-L-11-M-N-O");
+  delay(250);
+  break;
 
+  case 1: // Primeira e ultima
+  lcd.setCursor(0,2);
+  lcd.print("L-J-L-J-11-13-12");
+  delay(250);
+  break;
+
+  case 2: // Segunda
+  lcd.setCursor(0,2);
+  lcd.print("5-6-E-K-J-I-#");
+  delay(250);
+  break;
+
+  case 3: // Todas
+  lcd.setCursor(0,2);
+  lcd.print("#-14-V-R-16-M-S");
+  delay(250);
+  break;
+  
+  }
 }
 
 void loop() {
   if (start == false) {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Swipe the card");
+    //lcd.clear();
+    //lcd.setCursor(0, 0);
+    //lcd.print("Swipe the card");
     if (millis() - rfid_inicial >= 1000) {
       // Procurar objeto
       if (!mfrc522.PICC_IsNewCardPresent())
@@ -387,9 +417,10 @@ void loop() {
         lcd.print("Timer:");
 
       }
-
-
     }
+
+
+
   }
 
 
@@ -398,7 +429,7 @@ void loop() {
     timer();
     printlcd();
     boomcheck();
-    
+
     // Defuse manual
     // Procurar objeto
     if (!mfrc522.PICC_IsNewCardPresent())
@@ -435,11 +466,11 @@ void loop() {
       lcd.setCursor(0, 0);
       lcd.print("Card accepted");
       delay(250);
-      
+
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Manual override");
-      
+
       digitalWrite(LEDG, HIGH);
       tone(PIEZO, 3010, 300);
       delay(350);
