@@ -340,7 +340,7 @@ switch(random_val){
   
   case 0: // Primeira
   lcd.setCursor(0,2);
-  lcd.print("J-K-L-11-M-N-O");
+  lcd.print("J-K-L-10-M-N-O");
   delay(250);
   break;
 
